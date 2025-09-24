@@ -1,11 +1,12 @@
 const express = require("express");
-const { default: database } = require("./database/database");
-require("dotenv").config();
+srequire("dotenv").config();
 
+const userRouter = require("./routes/userRoute");
 const app = express();
 
 const PORT = process.env.PORT || 3002;
 
+app.use(userRouter);
 app.listen(PORT, () => {
   console.log(`localhost running on port ${PORT}`);
 });
