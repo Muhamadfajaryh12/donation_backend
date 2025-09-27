@@ -8,6 +8,8 @@ const app = express();
 const PORT = process.env.PORT || 3002;
 const version = "/api/v1/";
 
+app.use(express.urlencoded({extended:true}))
+app.use(express.json())
 app.use(version, userRouter);
 app.use(version, categoryRouter);
 
