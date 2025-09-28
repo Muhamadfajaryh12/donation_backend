@@ -43,6 +43,12 @@ class CampaignService {
     return result;
   }
 
+  async showByCategory(category) {
+    const query = `SELECT * FROM campaign WHERE category_id = ?`;
+    const [result] = await connection.query(query, [category]);
+    return result;
+  }
+
   async update(req) {
     const {
       title,
