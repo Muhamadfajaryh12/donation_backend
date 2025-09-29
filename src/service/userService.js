@@ -2,33 +2,42 @@ const connection = require("../database/database");
 const bcrypt = require("bcrypt");
 class userService {
   async store(req) {
-    const { email, nama, password } = req;
+    const { email, name, password, role } = req;
     try {
-      const query = "INSERT INTO user (email,nama,password) VALUES(?,?,?)";
-      const result = await connection.query(query, [email, nama, password]);
+      const query =
+        "INSERT INTO users (email,name,password,role) VALUES(?,?,?,?)";
+      const result = await connection.query(query, [
+        email,
+        name,
+        password,
+        role,
+      ]);
       return result;
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   }
 
-  async getUser(req) {
-    const { email, password } = req;
+  async getUser({ email, password }) {
     try {
-      const query = "SELECT email, password FROM user WHERE email = ?";
-      const [result] = await connection.query(query, [email]);
+      const query = "SELECT email, password FROM users WHERE email = ?";
+      const result = await connection.query(query, [email]);
 
       if (result.length == 0) {
         throw Error("Email atau Password salah");
       }
-      const passwordMatch = bcrypt.compare(password, result[0].password);
+      const passwordMatch = await bcrypt.compare(password, result[0].password);
 
       if (!passwordMatch) {
         throw Error("Email atau password salah");
       }
 
       return {
-        data: result.id,
+        data: result[0].id,
       };
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async updatePassword(req) {

@@ -1,14 +1,14 @@
 const express = require("express");
 require("dotenv").config();
-
+const cors = require("cors");
 const userRouter = require("./routes/userRoute");
 const categoryRouter = require("./routes/categoryRoute");
 const campaignRouter = require("./routes/campaignRoute");
 const app = express();
 
 const PORT = process.env.PORT || 3002;
-const version = "/api/v1/";
-
+const version = "/api/v1";
+app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(version, userRouter);

@@ -20,9 +20,10 @@ exports.up = function (db, callback) {
     {
       id: { type: "int", primaryKey: true, autoIncrement: true },
       email: { type: "string", notNull: true, length: 255 },
+      name: { type: "string", notNull: true, length: 255 },
       password: { type: "string", notNull: true, length: 255 },
-      role: { type: "enum", value: ["yayasan", "donatur"], notNull: true },
-      is_verified: { type: "boolean", defaultValue: false },
+      role: { type: "string", notNull: true },
+      is_verified: { type: "int", notNull: true, defaultValue: 0 },
     },
     callback
   );

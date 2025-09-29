@@ -16,22 +16,19 @@ exports.setup = function (options, seedLink) {
 
 exports.up = function (db, callback) {
   db.createTable(
-    "campaign",
+    "donation",
     {
       id: { type: "int", primaryKey: true, autoIncrement: true },
-      title: { type: "string", notNull: true, length: 255 },
-      location: { type: "string", notNull: true, length: 255 },
-      image: { type: "text", notNull: true },
-      description: { type: "text", notNull: true },
-      amount: { type: "bigint", notNull: true, defaultValue: 0 },
-      expired_date: { type: "date", notNull: true },
-      status: { type: "string", notNull: true },
-      category_id: {
+      name: { type: "string", notNull: true },
+      message: { type: "string", notNull: false },
+      status_payment: { type: "string", notNull: true },
+      donation: { type: "bigint", notNull: true },
+      user_id: {
         type: "int",
         notNull: true,
         foreignKey: {
-          name: "campaign_category_fk",
-          table: "category",
+          name: "donation_users_fk",
+          table: "users",
           mapping: "id",
           rules: {
             onDelete: "CASCADE",
@@ -39,12 +36,12 @@ exports.up = function (db, callback) {
           },
         },
       },
-      user_id: {
+      campaign_id: {
         type: "int",
         notNull: true,
         foreignKey: {
-          name: "campaign_users_fk",
-          table: "users",
+          name: "donation_campaign_fk",
+          table: "campaign",
           mapping: "id",
           rules: {
             onDelete: "CASCADE",

@@ -6,12 +6,13 @@ const response = require("../utils/Response");
 
 const register = async (req, res) => {
   try {
-    const { nama, password, email } = req.body;
+    const { name, password, email, role } = req.body;
     const hash_password = await bcrypt.hash(password, 10);
-    const result = userService.store({
-      nama: nama,
+    const result = await userService.store({
+      name: name,
       password: hash_password,
       email: email,
+      role: role,
     });
 
     return response(res, 201, "Berhasil membuat akun");
@@ -21,7 +22,10 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const result = userService.getUser({ email: email, password: password });
+    const result = await userService.getUser({
+      email: email,
+      password: password,
+    });
     const token = jwt.sign({ id: result.id }, process.env.SECRET_TOKEN);
     return response(res, 200, "Login berhasil", { token: token });
   } catch (error) {}
