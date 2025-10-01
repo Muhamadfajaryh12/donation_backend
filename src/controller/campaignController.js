@@ -1,5 +1,6 @@
 const campaignService = require("../service/campaignService");
-
+const response = require("../utils/Response");
+require("dotenv");
 class CampaignController {
   async create(req, res) {
     try {
@@ -9,7 +10,7 @@ class CampaignController {
         description,
         amount,
         expired_date,
-        status,
+        status = "Buka",
         category_id,
         user_id,
       } = req.body;
@@ -26,12 +27,21 @@ class CampaignController {
         category_id,
         user_id,
       });
-    } catch (error) {}
+
+      return response(res, 201, "Berhasil membuat campaign");
+    } catch (error) {
+      return response(res, 400, error);
+    }
   }
 
   async get(req, res) {
     try {
       const result = await campaignService.showAll();
+      const campaign = result.map((item) => ({
+        ...item,
+        image: `${process.env.BASE_URL}${item.image}`,
+      }));
+      return response(res, 200, "Berhasil fetch campaign", campaign);
     } catch (error) {}
   }
 

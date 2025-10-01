@@ -12,7 +12,8 @@ class CategoryService {
   async showAll(req) {
     try {
       const query = "SELECT * FROM category";
-      const [result] = await connection.query(query);
+      const rows = await connection.query(query);
+      return rows;
     } catch (err) {}
   }
 

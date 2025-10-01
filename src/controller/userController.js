@@ -26,6 +26,7 @@ const login = async (req, res) => {
       email: email,
       password: password,
     });
+
     const token = jwt.sign({ id: result.id }, process.env.SECRET_TOKEN);
     return response(res, 200, "Login berhasil", { token: token });
   } catch (error) {}

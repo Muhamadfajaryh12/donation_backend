@@ -20,7 +20,7 @@ class userService {
 
   async getUser({ email, password }) {
     try {
-      const query = "SELECT email, password FROM users WHERE email = ?";
+      const query = "SELECT id, email, password FROM users WHERE email = ?";
       const result = await connection.query(query, [email]);
 
       if (result.length == 0) {
@@ -33,7 +33,7 @@ class userService {
       }
 
       return {
-        data: result[0].id,
+        id: result[0].id,
       };
     } catch (error) {
       console.log(error);

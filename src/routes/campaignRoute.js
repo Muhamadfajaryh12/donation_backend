@@ -3,20 +3,21 @@ const Authorization = require("../middleware/authorization");
 const { upload } = require("../utils/Upload");
 const router = require("express").Router();
 
-router.get("/", campaignController.get);
-router.get("/:id", campaignController.getByCategory);
+const staticRouter = "/campaign";
+router.get(staticRouter, campaignController.get);
+router.get(staticRouter + "/:id", campaignController.getByCategory);
 router.post(
-  "/",
+  staticRouter,
   Authorization,
   upload.single("image"),
   campaignController.create
 );
 router.put(
-  "/:id",
+  staticRouter + "/:id",
   Authorization,
   upload.single("image"),
   campaignController.edit
 );
-router.delete("/:id", Authorization, campaignController.delete);
+router.delete(staticRouter + "/:id", Authorization, campaignController.delete);
 
 module.exports = router;

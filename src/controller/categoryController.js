@@ -1,5 +1,6 @@
 const categoryService = require("../service/categoryService");
 const CategoryService = require("../service/categoryService");
+const response = require("../utils/Response");
 
 const insertCategory = async (req, res) => {
   try {
@@ -11,6 +12,7 @@ const insertCategory = async (req, res) => {
 const getCategory = async (req, res) => {
   try {
     const result = await CategoryService.showAll();
+    return response(res, 200, "Berhasil fetch category", result);
   } catch (error) {}
 };
 

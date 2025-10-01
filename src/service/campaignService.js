@@ -23,7 +23,7 @@ class CampaignService {
         status,
         category_id,
         user_id) VALUES(?,?,?,?,?,?,?,?,?)`;
-
+    console.log(req);
     const result = await connection.query(query, [
       title,
       location,
@@ -35,11 +35,14 @@ class CampaignService {
       category_id,
       user_id,
     ]);
+
+    return result;
   }
 
   async showAll() {
-    const query = "SELECT * FROM campaign";
-    const [result] = await connection.query(query);
+    const query =
+      "SELECT * FROM campaign INNER JOIN category ON category.id = campaign.category_id";
+    const result = await connection.query(query);
     return result;
   }
 

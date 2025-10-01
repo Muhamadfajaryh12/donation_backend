@@ -9,7 +9,7 @@ if (fs.existsSync(folderPath)) {
 //Menyimpan File
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, pathFile);
+    cb(null, folderPath);
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + path.extname(file.originalname));
