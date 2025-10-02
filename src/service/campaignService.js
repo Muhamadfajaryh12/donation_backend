@@ -40,9 +40,38 @@ class CampaignService {
   }
 
   async showAll() {
-    const query =
-      "SELECT * FROM campaign INNER JOIN category ON category.id = campaign.category_id";
+    const query = `SELECT campaign.title,campaign.image,campaign.amount, campaign.id, campaign.status,users.name,users.is_verified,campaign.category_id,category.category,
+    GREATEST(DATEDIFF(campaign.expired_date, CURDATE()), 0) AS remaining_days,
+    COALESCE(SUM(donation.donation),0) as current_amount
+     FROM campaign 
+      INNER JOIN category ON category.id = campaign.category_id
+      INNER JOIN users ON users.id = campaign.user_id
+      LEFT JOIN donation ON donation.campaign_id = campaign.id
+    GROUP BY 
+    campaign.id,
+    campaign.title,
+    campaign.image,
+    campaign.amount,
+    campaign.status,
+    users.name,
+    users.is_verified,
+    campaign.category_id,
+    category.category,
+    campaign.expired_date;
+      `;
     const result = await connection.query(query);
+    return result;
+  }
+
+  async showByYayasan(id) {
+    const query = `SELECT campaign.title,campaign.image, campaign.id, campaign.status,users.name,users.is_verified,campaign.category_id,category.category,
+    GREATEST(DATEDIFF(campaign.expired_date, CURDATE()), 0) AS remaining_days
+     FROM campaign 
+      INNER JOIN category ON category.id = campaign.category_id
+      INNER JOIN users ON users.id = campaign.user_id
+      WHERE campaign.user_id = ?
+    `;
+    const result = await connection.query(query, [id]);
     return result;
   }
 
