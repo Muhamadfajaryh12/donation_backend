@@ -6,7 +6,8 @@ const router = require("express").Router();
 const staticRouter = "/campaign";
 router.get(staticRouter, campaignController.get);
 router.get(staticRouter + "/yayasan/:id", campaignController.getByYayasan);
-router.get(staticRouter + "/:id", campaignController.getByCategory);
+router.get(staticRouter + "/category/:id", campaignController.getByCategory);
+router.get(staticRouter + "/:id", campaignController.getDetail);
 router.post(
   staticRouter,
   Authorization,

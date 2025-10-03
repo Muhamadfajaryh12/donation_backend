@@ -45,6 +45,17 @@ class CampaignController {
     } catch (error) {}
   }
 
+  async getDetail(req, res) {
+    try {
+      const { id } = req.params;
+      const result = await campaignService.showDetail(id);
+      const campaign = result.map((item) => ({
+        ...item,
+        image: `${process.env.BASE_URL}${item.image}`,
+      }));
+      return response(res, 200, "Berhasil fetch campaign", campaign);
+    } catch (error) {}
+  }
   async getByYayasan(req, res) {
     try {
       const { id } = req.params;
