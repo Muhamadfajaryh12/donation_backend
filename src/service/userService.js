@@ -19,25 +19,21 @@ class userService {
   }
 
   async getUser({ email, password }) {
-    try {
-      const query = "SELECT id, email, password FROM users WHERE email = ?";
-      const result = await connection.query(query, [email]);
+    const query = "SELECT id, email, password FROM users WHERE email = ?";
+    const result = await connection.query(query, [email]);
 
-      if (result.length == 0) {
-        throw Error("Email atau Password salah");
-      }
-      const passwordMatch = await bcrypt.compare(password, result[0].password);
-
-      if (!passwordMatch) {
-        throw Error("Email atau password salah");
-      }
-
-      return {
-        id: result[0].id,
-      };
-    } catch (error) {
-      console.log(error);
+    if (result.length == 0) {
+      throw AppError(400, "Email atau Password salah");
     }
+    const passwordMatch = await bcrypt.compare(password, result[0].password);
+
+    if (!passwordMatch) {
+      throw AppError(400, "Email atau Password salah");
+    }
+
+    return {
+      id: result[0].id,
+    };
   }
 
   async updatePassword(req) {
@@ -48,6 +44,7 @@ class userService {
       const result = await connection.query(query, [id]);
 
       if (result.length == 0) {
+        throw AppError(400, "User tidak ditemukan");
       }
 
       const passwordMatch = await bcrypt.compare(
@@ -56,6 +53,7 @@ class userService {
       );
 
       if (!passwordMatch) {
+        throw AppError(400, "Password tidak sesuai");
       }
 
       const hashedPassword = await bcrypt.hash(new_password, 10);

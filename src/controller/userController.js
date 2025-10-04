@@ -19,7 +19,7 @@ const register = async (req, res) => {
   } catch (error) {}
 };
 
-const login = async (req, res) => {
+const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     const result = await userService.getUser({
@@ -29,7 +29,9 @@ const login = async (req, res) => {
 
     const token = jwt.sign({ id: result.id }, process.env.SECRET_TOKEN);
     return response(res, 200, "Login berhasil", { token: token });
-  } catch (error) {}
+  } catch (error) {
+    next(error);
+  }
 };
 
 module.exports = {
