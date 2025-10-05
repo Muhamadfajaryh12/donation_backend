@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 require("dotenv");
 const response = require("../utils/Response");
 
-const register = async (req, res) => {
+const register = async (req, res, next) => {
   try {
     const { name, password, email, role } = req.body;
     const hash_password = await bcrypt.hash(password, 10);
@@ -16,7 +16,9 @@ const register = async (req, res) => {
     });
 
     return response(res, 201, "Berhasil membuat akun");
-  } catch (error) {}
+  } catch (error) {
+    next(error);
+  }
 };
 
 const login = async (req, res, next) => {

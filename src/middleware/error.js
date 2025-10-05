@@ -6,3 +6,5 @@ const error = (err, req, res, next) => {
     message: err.message || "Internal server error",
   });
 };
+
+module.exports = error;
