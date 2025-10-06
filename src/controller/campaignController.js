@@ -34,15 +34,28 @@ class CampaignController {
     }
   }
 
-  async get(req, res) {
+  async get(req, res, next) {
     try {
-      const result = await campaignService.showAll();
+      const { category_id, search } = req.query;
+
+      let result;
+
+      if (category_id) {
+        result = await campaignService.showByCategory(category_id);
+      } else if (search) {
+        result = await campaignService.showSearch(search);
+      } else {
+        result = await campaignService.showAll();
+      }
+
       const campaign = result.map((item) => ({
         ...item,
         image: `${process.env.BASE_URL}${item.image}`,
       }));
       return response(res, 200, "Berhasil fetch campaign", campaign);
-    } catch (error) {}
+    } catch (error) {
+      return next(error);
+    }
   }
 
   async getDetail(req, res) {
@@ -65,13 +78,6 @@ class CampaignController {
         image: `${process.env.BASE_URL}${item.image}`,
       }));
       return response(res, 200, "Berhasil fetch campaign", campaign);
-    } catch (error) {}
-  }
-
-  async getByCategory(req, res) {
-    try {
-      const { id } = req.params;
-      const result = await campaignService.showByCategory(id);
     } catch (error) {}
   }
 
