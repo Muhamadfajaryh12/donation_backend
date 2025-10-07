@@ -18,7 +18,8 @@ class userService {
   }
 
   async getUser({ email, password }) {
-    const query = "SELECT id, email, password FROM users WHERE email = ?";
+    const query =
+      "SELECT id,name,role, email, password FROM users WHERE email = ?";
     const result = await connection.query(query, [email]);
 
     if (result.length == 0) {
@@ -32,6 +33,8 @@ class userService {
 
     return {
       id: result[0].id,
+      name: result[0].name,
+      role: result[0].role,
     };
   }
 

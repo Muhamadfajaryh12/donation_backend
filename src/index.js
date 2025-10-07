@@ -4,6 +4,7 @@ const cors = require("cors");
 const userRouter = require("./routes/userRoute");
 const categoryRouter = require("./routes/categoryRoute");
 const campaignRouter = require("./routes/campaignRoute");
+const dashboardRouter = require("./routes/dashboardRoute");
 const bodyParser = require("body-parser");
 const path = require("path");
 const app = express();
@@ -18,6 +19,7 @@ app.use(bodyParser.json());
 app.use(version, userRouter);
 app.use(version, categoryRouter);
 app.use(version, campaignRouter);
+app.use(version, dashboardRouter);
 app.use(errorMiddleware);
 
 app.listen(PORT, () => {
