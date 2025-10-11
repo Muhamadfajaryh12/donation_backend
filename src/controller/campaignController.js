@@ -1,5 +1,6 @@
 const campaignService = require("../service/campaignService");
 const response = require("../utils/Response");
+const { upload, destroy } = require("../utils/Upload");
 require("dotenv");
 class CampaignController {
   async create(req, res) {
@@ -58,7 +59,7 @@ class CampaignController {
     }
   }
 
-  async getDetail(req, res) {
+  async getDetail(req, res, next) {
     try {
       const { id } = req.params;
       const result = await campaignService.showDetail(id);
@@ -66,9 +67,12 @@ class CampaignController {
         ...item,
         image: `${process.env.BASE_URL}${item.image}`,
       }));
-      return response(res, 200, "Berhasil fetch campaign", campaign);
-    } catch (error) {}
+      return response(res, 200, "Berhasil fetch campaign", campaign[0]);
+    } catch (error) {
+      return next(error);
+    }
   }
+
   async getByYayasan(req, res) {
     try {
       const { id } = req.params;
@@ -110,11 +114,16 @@ class CampaignController {
     } catch (error) {}
   }
 
-  async delete(req, res) {
+  async delete(req, res, next) {
     try {
       const { id } = req.params;
+      const campaign = await campaignService.showDetail(id);
+      destroy(campaign[0].image);
       const result = await campaignService.destroy(id);
-    } catch (error) {}
+      response(res, 200, "Berhasil menghapus campaign", { id: id });
+    } catch (error) {
+      next(error);
+    }
   }
 }
 

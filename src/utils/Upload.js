@@ -3,7 +3,7 @@ const path = require("path");
 const fs = require("fs");
 
 const folderPath = path.join(__dirname, "../public/uploads");
-if (fs.existsSync(folderPath)) {
+if (!fs.existsSync(folderPath)) {
   fs.mkdirSync(folderPath, { recursive: true });
 }
 //Menyimpan File
@@ -20,7 +20,9 @@ const upload = multer({ storage: storage });
 
 //Menghapus File
 const destroy = (filename) => {
-  const filepath = path.join(__dirname, "../public/uploads", filename);
+  if (!filename) return;
+  const basename = path.basename(filename);
+  const filepath = path.join(__dirname, "../public/uploads", basename);
   if (fs.existsSync(filepath)) {
     fs.unlinkSync(filepath);
   }

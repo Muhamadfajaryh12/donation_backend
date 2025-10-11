@@ -68,7 +68,7 @@ class CampaignService {
     FROM campaign
       INNER JOIN category ON category.id = campaign.category_id
       INNER JOIN users ON users.id = campaign.user_id
-      LEFT JOIN donaion ON donation.campaign_id = campaign.id
+      LEFT JOIN donation ON donation.campaign_id = campaign.id
       WHERE campaign.id = ?
     `;
 
@@ -159,9 +159,9 @@ class CampaignService {
   }
 
   async destroy(id) {
-    const query = "DELETE campaign WHERE id = ?";
-    const [result] = await connection.query(query, [id]);
-    return { id };
+    const query = "DELETE FROM campaign WHERE id = ?";
+    const result = await connection.query(query, [id]);
+    return result;
   }
 }
 
