@@ -1,6 +1,7 @@
 const response = (res, status, message, data = null) => {
   const response = {
     status: status,
+
     message: message,
   };
 

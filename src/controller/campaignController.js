@@ -46,7 +46,7 @@ class CampaignController {
       } else if (search) {
         result = await campaignService.showSearch(search);
       } else {
-        result = await campaignService.showAll();
+        result = await campaignService.showUrgent();
       }
 
       const campaign = result.map((item) => ({
@@ -73,7 +73,7 @@ class CampaignController {
     }
   }
 
-  async getByYayasan(req, res) {
+  async getByYayasan(req, res, next) {
     try {
       const { id } = req.params;
       const result = await campaignService.showByYayasan(id);
@@ -82,10 +82,12 @@ class CampaignController {
         image: `${process.env.BASE_URL}${item.image}`,
       }));
       return response(res, 200, "Berhasil fetch campaign", campaign);
-    } catch (error) {}
+    } catch (error) {
+      next(error);
+    }
   }
 
-  async edit(req, res) {
+  async edit(req, res, next) {
     try {
       const { id } = req.params;
       const {
@@ -94,12 +96,16 @@ class CampaignController {
         description,
         amount,
         expired_date,
-        status,
+        status = "Buka",
         category_id,
-        user_id,
       } = req.body;
-      const image = req.file ? `/public/uploads/${req.file.filename}` : null;
-      const result = await campaignService.edit({
+      const campaign = await campaignService.showDetail(id);
+      let image = campaign[0].image;
+      if (req.file) {
+        destroy(image);
+        image = `/public/uploads/${req.file.filename}`;
+      }
+      const result = await campaignService.update({
         title,
         location,
         image,
@@ -108,10 +114,13 @@ class CampaignController {
         expired_date,
         status,
         category_id,
-        user_id,
         id,
       });
-    } catch (error) {}
+
+      return response(res, 200, "Berhasil mengedit campaign", result);
+    } catch (error) {
+      next(error);
+    }
   }
 
   async delete(req, res, next) {
