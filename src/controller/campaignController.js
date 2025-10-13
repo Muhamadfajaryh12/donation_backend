@@ -39,21 +39,36 @@ class CampaignController {
     try {
       const { category_id, search } = req.query;
 
-      let result;
-
       if (category_id) {
-        result = await campaignService.showByCategory(category_id);
+        const result = await campaignService.showByCategory(category_id);
+        const campaign = result.map((item) => ({
+          ...item,
+          image: `${process.env.BASE_URL}${item.image}`,
+        }));
+        return response(res, 200, "Berhasil fetch campaign", campaign);
       } else if (search) {
-        result = await campaignService.showSearch(search);
+        const result = await campaignService.showSearch(search);
+        const campaign = result.map((item) => ({
+          ...item,
+          image: `${process.env.BASE_URL}${item.image}`,
+        }));
+        return response(res, 200, "Berhasil fetch campaign", campaign);
       } else {
-        result = await campaignService.showUrgent();
+        const resultUrgent = await campaignService.showUrgent();
+        const resultAll = await campaignService.showAll();
+        const campaignUrgent = resultUrgent.map((item) => ({
+          ...item,
+          image: `${process.env.BASE_URL}${item.image}`,
+        }));
+        const campaignAll = resultAll.map((item) => ({
+          ...item,
+          image: `${process.env.BASE_URL}${item.image}`,
+        }));
+        return response(res, 200, "Berhasil fetch campaign", {
+          urgent: campaignUrgent,
+          all: campaignAll,
+        });
       }
-
-      const campaign = result.map((item) => ({
-        ...item,
-        image: `${process.env.BASE_URL}${item.image}`,
-      }));
-      return response(res, 200, "Berhasil fetch campaign", campaign);
     } catch (error) {
       return next(error);
     }

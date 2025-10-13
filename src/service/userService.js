@@ -35,6 +35,7 @@ class userService {
       id: result[0].id,
       name: result[0].name,
       role: result[0].role,
+      email: result[0].email,
     };
   }
 
@@ -42,7 +43,7 @@ class userService {
     try {
       const { id, new_password, old_password } = req;
 
-      const query = "SELECT password FROM user WHERE id = ? ";
+      const query = "SELECT password FROM users WHERE id = ? ";
       const result = await connection.query(query, [id]);
 
       if (result.length == 0) {
@@ -60,7 +61,7 @@ class userService {
 
       const hashedPassword = await bcrypt.hash(new_password, 10);
 
-      const queryUpdate = "UPDATE user SET password = ? WHERE id = ?";
+      const queryUpdate = "UPDATE users SET password = ? WHERE id = ?";
       const resultUpdate = await connection.query(queryUpdate, [
         hashedPassword,
         id,
@@ -68,6 +69,12 @@ class userService {
     } catch (error) {
       return;
     }
+  }
+
+  async verification(id) {
+    const query = `UPDATE users SET is_verified = 1 WHERE id = ?`;
+    const result = await connection.query(query, [id]);
+    return result;
   }
 }
 

@@ -3,7 +3,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv");
 const response = require("../utils/Response");
-
+const jsonwebtoken = require("jsonwebtoken");
+const EmailController = require("./EmailController");
 const register = async (req, res, next) => {
   try {
     const { name, password, email, role } = req.body;
@@ -30,7 +31,7 @@ const login = async (req, res, next) => {
     });
 
     const token = jwt.sign(
-      { id: result.id, name: result.name },
+      { id: result.id, name: result.name, email: result.email },
       process.env.SECRET_TOKEN
     );
     return response(res, 200, "Login berhasil", {
@@ -42,7 +43,33 @@ const login = async (req, res, next) => {
   }
 };
 
+const verifikasiAccount = async (req, res, next) => {
+  try {
+  } catch (error) {
+    next(error);
+  }
+};
+
+const sendVerification = async (req, res, next) => {
+  try {
+    const { authKey } = req.query;
+    const payload = jsonwebtoken.decode(authKey);
+    await EmailController.sendEmail({
+      to: payload.email,
+      subject: "Verifikasi Akun",
+      html: `<p>Halo ${payload.name}, klik tombol di bawah untuk verifikasi akunmu:</p>
+             <a href="${process.env.BASE_URL}/verify?authKey=${authKey}" 
+                style="padding:10px 15px; background:#4CAF50; color:white; text-decoration:none;">
+                Verifikasi Sekarang
+             </a>`,
+    });
+    return response(res, 200, "Email berhasil terkirim");
+  } catch (error) {
+    next(error);
+  }
+};
 module.exports = {
   register,
   login,
+  sendVerification,
 };
