@@ -43,8 +43,21 @@ const login = async (req, res, next) => {
   }
 };
 
+const getProfile = async (req, res, next) => {
+  try {
+    const result = await userService.getProfile(req.user.id);
+    return response(res, 200, "Berhasil fetch profile", result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const verifikasiAccount = async (req, res, next) => {
   try {
+    const { authKey } = req.query;
+    const payload = jsonwebtoken.decode(authKey);
+    const result = await userService.verification(payload.id);
+    return res.redirect("http://localhost:5173/profile");
   } catch (error) {
     next(error);
   }
@@ -58,13 +71,18 @@ const sendVerification = async (req, res, next) => {
       to: payload.email,
       subject: "Verifikasi Akun",
       html: `<p>Halo ${payload.name}, klik tombol di bawah untuk verifikasi akunmu:</p>
-             <a href="${process.env.BASE_URL}/verify?authKey=${authKey}" 
+             <a href="${process.env.BASE_URL}/api/v1/verify?authKey=${authKey}" 
                 style="padding:10px 15px; background:#4CAF50; color:white; text-decoration:none;">
                 Verifikasi Sekarang
              </a>`,
     });
-    return response(res, 200, "Email berhasil terkirim");
+    return response(
+      res,
+      200,
+      "Verifikasi berhasil terkirim, silahkan cek email anda."
+    );
   } catch (error) {
+    console.log(error);
     next(error);
   }
 };
@@ -72,4 +90,6 @@ module.exports = {
   register,
   login,
   sendVerification,
+  verifikasiAccount,
+  getProfile,
 };

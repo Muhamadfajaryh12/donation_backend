@@ -39,6 +39,13 @@ class userService {
     };
   }
 
+  async getProfile(id) {
+    const query =
+      "SELECT id,email,name,role,is_verified FROM users WHERE id = ?";
+    const result = await connection.query(query, [id]);
+    return result[0];
+  }
+
   async updatePassword(req) {
     try {
       const { id, new_password, old_password } = req;

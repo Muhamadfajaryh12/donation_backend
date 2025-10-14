@@ -22,7 +22,7 @@ class EmailController {
     try {
       await transporter.sendMail(mailOptions);
     } catch (error) {
-      next(error);
+      return error;
     }
   }
 }
