@@ -78,11 +78,9 @@ class CampaignController {
     try {
       const { id } = req.params;
       const result = await campaignService.showDetail(id);
-      const campaign = result.map((item) => ({
-        ...item,
-        image: `${process.env.BASE_URL}${item.image}`,
-      }));
-      return response(res, 200, "Berhasil fetch campaign", campaign[0]);
+
+      result.image = `${process.env.BASE_URL}${result.image}`;
+      return response(res, 200, "Berhasil fetch campaign", result);
     } catch (error) {
       return next(error);
     }
