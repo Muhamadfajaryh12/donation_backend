@@ -1,7 +1,8 @@
+const donationService = require("../service/donationService");
 const DonationService = require("../service/donationService");
 const response = require("../utils/Response");
 const paymentController = require("./paymentController");
-
+require("dotenv");
 class DonationController {
   async createDonation(req, res, next) {
     try {
@@ -28,6 +29,20 @@ class DonationController {
         ...result,
         transaction,
       });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getHistoryDonation(req, res, next) {
+    try {
+      const user = req.user;
+      const result = await donationService.getHistoryDonation(user.id);
+      const donation = result.map((item) => ({
+        ...item,
+        image: `${process.env.BASE_URL}${item.image}`,
+      }));
+      return response(res, 200, "Berhasil fetch riwayat donasi", donation);
     } catch (error) {
       next(error);
     }
