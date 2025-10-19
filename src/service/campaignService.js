@@ -96,7 +96,7 @@ class CampaignService {
   }
 
   async showDetail(id) {
-    const query = `SELECT campaign.title,campaign.image,campaign.amount, campaign.id, campaign.status,users.name,users.is_verified,campaign.category_id,category.category,
+    const query = `SELECT campaign.title,campaign.image,campaign.amount,campaign.location, campaign.description,campaign.expired_date, campaign.id, campaign.status,users.name,users.is_verified,campaign.category_id,category.category,
     GREATEST(DATEDIFF(campaign.expired_date, CURDATE()), 0) AS remaining_days,
     COALESCE(SUM(donation.donation),0) as current_amount
      FROM campaign 
@@ -127,11 +127,15 @@ class CampaignService {
 
   async showByYayasan(id) {
     const query = `SELECT campaign.title,campaign.image, campaign.id, campaign.status,users.name,users.is_verified,campaign.category_id,category.category,
-    GREATEST(DATEDIFF(campaign.expired_date, CURDATE()), 0) AS remaining_days
+    GREATEST(DATEDIFF(campaign.expired_date, CURDATE()), 0) AS remaining_days,
+    COALESCE(SUM(donation.donation),0) as current_donation
      FROM campaign 
       INNER JOIN category ON category.id = campaign.category_id
       INNER JOIN users ON users.id = campaign.user_id
+      LEFT JOIN donation on donation.campaign_id = campaign.id
       WHERE campaign.user_id = ?
+        GROUP BY campaign.id;
+
     `;
     const result = await connection.query(query, [id]);
     return result;

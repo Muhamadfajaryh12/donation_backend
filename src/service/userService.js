@@ -40,8 +40,19 @@ class userService {
   }
 
   async getProfile(id) {
-    const query =
-      "SELECT id,email,name,role,is_verified FROM users WHERE id = ?";
+    const query = `
+    SELECT 
+      users.id,
+      users.email,
+      users.name,
+      users.role,
+      users.is_verified,
+      COALESCE(SUM(donation.donation), 0) AS total_donation,
+      COALESCE(COUNT(DISTINCT donation.campaign_id), 0) AS total_campaign
+    FROM users
+    LEFT JOIN donation ON donation.user_id = users.id
+    WHERE users.id = ?
+    GROUP BY users.id`;
     const result = await connection.query(query, [id]);
     return result[0];
   }
