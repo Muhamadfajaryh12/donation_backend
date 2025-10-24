@@ -38,6 +38,7 @@ class CampaignController {
   async get(req, res, next) {
     try {
       const { category_id, search } = req.query;
+      console.log(search);
 
       if (category_id) {
         const result = await campaignService.showByCategory(category_id);
@@ -46,7 +47,7 @@ class CampaignController {
           image: `${process.env.BASE_URL}${item.image}`,
         }));
         return response(res, 200, "Berhasil fetch campaign", campaign);
-      } else if (search) {
+      } else if (search !== undefined) {
         const result = await campaignService.showSearch(search);
         const campaign = result.map((item) => ({
           ...item,

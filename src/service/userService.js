@@ -57,36 +57,32 @@ class userService {
     return result[0];
   }
 
-  async updatePassword(req) {
-    try {
-      const { id, new_password, old_password } = req;
+  async updatePassword({ id, new_password, old_password }) {
+    const query = "SELECT password FROM users WHERE id = ? ";
+    const result = await connection.query(query, [id]);
 
-      const query = "SELECT password FROM users WHERE id = ? ";
-      const result = await connection.query(query, [id]);
-
-      if (result.length == 0) {
-        throw new AppError(400, "User tidak ditemukan");
-      }
-
-      const passwordMatch = await bcrypt.compare(
-        old_password,
-        result[0].password
-      );
-
-      if (!passwordMatch) {
-        throw new AppError(400, "Password tidak sesuai");
-      }
-
-      const hashedPassword = await bcrypt.hash(new_password, 10);
-
-      const queryUpdate = "UPDATE users SET password = ? WHERE id = ?";
-      const resultUpdate = await connection.query(queryUpdate, [
-        hashedPassword,
-        id,
-      ]);
-    } catch (error) {
-      return;
+    if (result.length == 0) {
+      throw new AppError(400, "User tidak ditemukan");
     }
+
+    const passwordMatch = await bcrypt.compare(
+      old_password,
+      result[0].password
+    );
+
+    if (!passwordMatch) {
+      throw new AppError(400, "Password tidak sesuai");
+    }
+
+    const hashedPassword = await bcrypt.hash(new_password, 10);
+
+    const queryUpdate = "UPDATE users SET password = ? WHERE id = ?";
+    const resultUpdate = await connection.query(queryUpdate, [
+      hashedPassword,
+      id,
+    ]);
+
+    return resultUpdate;
   }
 
   async verification(id) {

@@ -11,7 +11,7 @@ class DashboardService {
     `;
 
     const result = await connection.query(query, [id]);
-    return result;
+    return result[0];
   }
 
   async get_donation_day(id) {
@@ -37,6 +37,19 @@ class DashboardService {
 
     const result = await connection.query(query, [id]);
     return result;
+  }
+
+  async get_donatur(id) {
+    const query = `SELECT 
+   COUNT(DISTINCT donation.user_id) as total_donatur,
+   COALESCE(SUM(donation.donation) / COUNT(DISTINCT donation.user_id) , 0) as total_avg_donatur
+    FROM donation
+    LEFT JOIN campaign ON campaign.id = donation.campaign_id
+    WHERE campaign.user_id = ?
+    `;
+
+    const result = await connection.query(query, [id]);
+    return result[0];
   }
 }
 

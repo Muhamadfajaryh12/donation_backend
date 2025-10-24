@@ -5,6 +5,7 @@ const {
   sendVerification,
   verifikasiAccount,
   getProfile,
+  updatePassword,
 } = require("../controller/userController");
 const validation = require("../middleware/validation");
 const userSchema = require("../schema/userSchema");
@@ -17,4 +18,5 @@ router.post("/login", validation(userSchema.loginSchema), login);
 router.get("/profile", Authorization, getProfile);
 router.get("/verify", verifikasiAccount);
 router.post("/verify-send", Authorization, sendVerification);
+router.post("/update-password", Authorization, updatePassword);
 module.exports = router;

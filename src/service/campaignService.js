@@ -59,7 +59,8 @@ class CampaignService {
     campaign.category_id,
     category.category,
     campaign.expired_date,
-    users.is_verified;
+    users.is_verified
+    LIMIT 4;
       `;
     const result = await connection.query(query);
     return result;
@@ -88,7 +89,7 @@ class CampaignService {
     campaign.expired_date,
     users.is_verified
     ORDER BY remaining_days ASC
-    LIMIT 9
+    LIMIT 4
     `;
 
     const result = await connection.query(query);
@@ -126,7 +127,7 @@ class CampaignService {
   }
 
   async showByYayasan(id) {
-    const query = `SELECT campaign.title,campaign.image, campaign.id, campaign.status,users.name,users.is_verified,campaign.category_id,category.category,
+    const query = `SELECT campaign.title,campaign.image, campaign.id,campaign.amount, campaign.status,users.name,users.is_verified,campaign.category_id,category.category,
     GREATEST(DATEDIFF(campaign.expired_date, CURDATE()), 0) AS remaining_days,
     COALESCE(SUM(donation.donation),0) as current_donation
      FROM campaign 
@@ -186,7 +187,12 @@ class CampaignService {
     campaign.category_id,
     category.category,
     campaign.expired_date;`;
-    const result = await connection.query(query, [`%${keyword}%`]);
+    const key =
+      keyword == "null" || keyword == null || keyword == undefined
+        ? ""
+        : keyword;
+    const result = await connection.query(query, [`%${key}%`]);
+
     return result;
   }
   async update(req) {

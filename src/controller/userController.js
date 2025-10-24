@@ -86,10 +86,27 @@ const sendVerification = async (req, res, next) => {
     next(error);
   }
 };
+
+const updatePassword = async (req, res, next) => {
+  try {
+    const user = req.user;
+    const { old_password, new_password } = req.body;
+    const result = await userService.updatePassword({
+      old_password: old_password,
+      new_password: new_password,
+      id: user.id,
+    });
+
+    return response(res, 200, "Berhasil mengganti password");
+  } catch (error) {
+    next(error);
+  }
+};
 module.exports = {
   register,
   login,
   sendVerification,
   verifikasiAccount,
   getProfile,
+  updatePassword,
 };
